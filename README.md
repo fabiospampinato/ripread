@@ -17,7 +17,13 @@ npm install --save ripread
 
 ## Usage
 
-This library exposes a single function, you pass it an array of absolute paths and it returns to you a promise to an array of string contents, if for some reason reading anything fails it throws.
+The following interface is provided:
+
+```ts
+function ripread ( filePaths: string[] ): (string | Error)[];
+```
+
+This library exposes a single function, you pass it an array of absolute paths and it returns to you a promise to an array containing either string contents or `Error` instances, in case the correspending files couldn't be read successfully.
 
 ```ts
 import ripread from 'ripread';

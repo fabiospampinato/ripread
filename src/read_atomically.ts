@@ -5,9 +5,9 @@ import {readFile} from 'atomically';
 
 /* READ ATOMICALLY */
 
-const readAtomically = async ( filePaths: string[], contents: (string | null)[] ): Promise<string[]> => {
+const readAtomically = async ( filePaths: string[], contents: (string | null)[] ): Promise<(string | Error)[]> => {
 
-  const promises: Promise<void>[] = [];
+  const promises: Promise<string>[] = [];
 
   for ( let i = 0, l = contents.length; i < l; i++ ) {
 
@@ -15,13 +15,13 @@ const readAtomically = async ( filePaths: string[], contents: (string | null)[] 
 
     if ( content !== null ) continue; // Read correctly already
 
-    promises[promises.length] = readFile ( filePaths[i], 'utf8' ).then ( content => { contents[i] = content } );
+    promises[promises.length] = readFile ( filePaths[i], 'utf8' ).then ( content => contents[i] = content, error => contents[i] = error );
 
   }
 
   await Promise.all ( promises );
 
-  return contents as string[];
+  return contents as (string | Error)[];
 
 };
 

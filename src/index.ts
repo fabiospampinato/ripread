@@ -10,7 +10,7 @@ import Utils from './utils';
 
 /* RIPREAD */
 
-const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): Promise<string[]> => {
+const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): Promise<(string | Error)[]> => {
 
   const poolSize = options.poolSize ?? Math.max ( 2, Math.floor ( os.cpus ().length / 2 ) - 1 ),
         batchSize = options.poolBatchSize ?? Math.min ( 100, Math.max ( 2, Math.round ( filePaths.length / poolSize ) ) ),
