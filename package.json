@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "atomically": "^1.7.0",
-    "node-worker-threads-pool": "^1.4.3"
+    "worktank": "^1.0.0"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

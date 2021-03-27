@@ -7,7 +7,7 @@ import {Callback} from './types';
 
 // It's important that this function doesn't depend on the closure and can just be extracted by calling `#toString` on it
 
-const readWorker = ([ filePaths, fileChunkSize ]: [ string[], number ]): Promise<(string | null)[]> => {
+function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(string | null)[]> {
 
   /* POOL */ // Reusing buffers as much as possible
 
@@ -31,7 +31,7 @@ const readWorker = ([ filePaths, fileChunkSize ]: [ string[], number ]): Promise
 
   const FS = global['FS'] = global['FS'] || (() => {
 
-    const path = require ( 'path' ),
+    const path = this.require ( 'path' ),
           fs = process['binding']( 'fs' ),
           {open, close, read, FSReqCallback} = fs,
           {toNamespacedPath} = path;

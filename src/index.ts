@@ -1,8 +1,8 @@
 
 /* IMPORT */
 
-import {StaticPool} from 'node-worker-threads-pool';
 import * as os from 'os';
+import WorkPool from 'worktank';
 import {Options} from './types';
 import readAtomically from './read_atomically';
 import readWorker from './read_worker';
@@ -17,9 +17,10 @@ const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): P
         fileChunkSize = options.poolFileChunkSize ?? 384000;
 
   const batches = Utils.chunk ( filePaths, batchSize ),
-        pool = new StaticPool ({ size: poolSize, task: readWorker }),
-        poolCleanup = () => pool.destroy (),
-        poolContents = await Promise.all ( batches.map ( chunk => pool.exec ([ chunk, fileChunkSize ]) ) ).finally ( poolCleanup ),
+        pool = new WorkPool ({ size: poolSize, methods: { read: readWorker } }),
+        poolExec = ( batch: string[] ) => pool.exec ( 'read', [batch, fileChunkSize] ).catch ( () => new Array ( batch.length ).fill ( null ) ),
+        poolTerminate = () => pool.terminate (),
+        poolContents = await Promise.all ( batches.map ( poolExec ) ).finally ( poolTerminate ),
         contentsUnreliable = Utils.flatten ( poolContents ),
         contentsReliable = await readAtomically ( filePaths, contentsUnreliable );
 
