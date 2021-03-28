@@ -2,7 +2,7 @@
 /* IMPORT */
 
 import * as os from 'os';
-import WorkPool from 'worktank';
+import WorkTank from 'worktank';
 import {Options} from './types';
 import readAtomically from './read_atomically';
 import readWorker from './read_worker';
@@ -17,7 +17,7 @@ const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): P
         fileChunkSize = options.poolFileChunkSize ?? 384000;
 
   const batches = Utils.chunk ( filePaths, batchSize ),
-        pool = new WorkPool ({ size: poolSize, methods: { read: readWorker } }),
+        pool = new WorkTank ({ size: poolSize, methods: { read: readWorker } }),
         poolExec = ( batch: string[] ) => pool.exec ( 'read', [batch, fileChunkSize] ).catch ( () => new Array ( batch.length ).fill ( null ) ),
         poolTerminate = () => pool.terminate (),
         poolContents = await Promise.all ( batches.map ( poolExec ) ).finally ( poolTerminate ),

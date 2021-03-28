@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "atomically": "^1.7.0",
-    "worktank": "^1.0.0"
+    "worktank": "^1.1.1"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
