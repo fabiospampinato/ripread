@@ -1,7 +1,7 @@
 {
   "name": "ripread",
   "description": "Read lots of files as if a saber-tooth tiger is chasing you!",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
