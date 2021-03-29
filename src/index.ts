@@ -17,7 +17,7 @@ const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): P
         fileChunkSize = options.poolFileChunkSize ?? 384000;
 
   const batches = Utils.chunk ( filePaths, batchSize ),
-        pool = new WorkTank ({ size: poolSize, methods: { read: readWorker } }),
+        pool = new WorkTank ({ name: 'ripread', size: poolSize, methods: { read: readWorker } }),
         poolExec = ( batch: string[] ) => pool.exec ( 'read', [batch, fileChunkSize] ).catch ( () => new Array ( batch.length ).fill ( null ) ),
         poolTerminate = () => pool.terminate (),
         poolContents = await Promise.all ( batches.map ( poolExec ) ).finally ( poolTerminate ),
