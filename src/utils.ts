@@ -26,6 +26,12 @@ const Utils = {
 
     return ( <T[]> [] ).concat ( ...arr );
 
+  },
+
+  noop: <T> ( x: T ): T => {
+
+    return x;
+
   }
 
 };
