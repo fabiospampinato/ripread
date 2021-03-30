@@ -18,13 +18,12 @@ const ripread = async ( filePaths: string[], options: Partial<Options> = {} ): P
 
   const batches = Utils.chunk ( filePaths, batchSize ),
         pool = new WorkTank ({ name: 'ripread', size: poolSize, methods: { read: readWorker } }),
-        poolExec = ( batch: string[] ) => pool.exec ( 'read', [batch, fileChunkSize] ).catch ( () => new Array ( batch.length ).fill ( null ) ),
+        poolExec = ( batch: string[] ) => pool.exec ( 'read', [batch, fileChunkSize] ).catch ( () => new Array<null> ( batch.length ).fill ( null ) ).then ( contents => readAtomically ( batch, contents ) ),
         poolTerminate = () => pool.terminate (),
         poolContents = await Promise.all ( batches.map ( poolExec ) ).finally ( poolTerminate ),
-        contentsUnreliable = Utils.flatten ( poolContents ),
-        contentsReliable = await readAtomically ( filePaths, contentsUnreliable );
+        contents = Utils.flatten ( poolContents );
 
-  return contentsReliable;
+  return contents;
 
 };
 
