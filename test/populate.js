@@ -20,9 +20,29 @@ const populate = () => {
         filesPaths = [],
         filesContents = [];
 
+  /* EMPTY FILES */
+
+  for ( let i = 0; i < 100; i++ ) {
+
+    const filePath = path.join ( rootPath, `${i}.txt` ),
+          fileContent = '',
+          file = {filePath, fileContent};
+
+    if ( !fs.existsSync ( filePath ) ) {
+
+      fs.writeFileSync ( filePath, fileContent );
+
+    }
+
+    files.push ( file );
+    filesPaths.push ( filePath );
+    filesContents.push ( fileContent );
+
+  }
+
   /* SMALL FILES */
 
-  for ( let i = 0; i < 10000; i++ ) {
+  for ( let i = 100; i < 10000; i++ ) {
 
     const filePath = path.join ( rootPath, `${i}.txt` ),
           fileContent = 'a'.repeat ( 5000 ),

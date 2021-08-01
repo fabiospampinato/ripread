@@ -55,17 +55,28 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
     };
 
     const fileReadChunks = ( chunks: Buffer[], fd: number, position: number, callback: Callback<string> ): void => {
-      const chunk: Buffer = POOL.alloc ();
-      FS.fileRead ( fd, chunk, 0, chunk.length, position, ( error: Error | null, bytesRead: number ): void => {
-        if ( error ) chunks.forEach ( POOL.release );
-        if ( error ) return callback ( error, '' );
-        if ( bytesRead ) chunks[chunks.length] = chunk;
-        if ( bytesRead < chunk.length ) { // Fewer bytes than maximally allowed got read, it's safe to consider the end of the file reached
-          if ( chunks.length === 1 ) { // Single chunk, no merging required
+      const asd123123123: Buffer = POOL.alloc ();
+      FS.fileRead ( fd, asd123123123, 0, asd123123123.length, position, ( error: Error | null, bytesRead: number ): void => {
+        if ( error ) {
+          POOL.release ( asd123123123 );
+          chunks.forEach ( POOL.release );
+          return callback ( error, '' );
+        }
+        if ( bytesRead ) {
+          chunks[chunks.length] = asd123123123;
+        } else {
+          POOL.release ( asd123123123 );
+        }
+        if ( bytesRead < asd123123123.length ) { // Fewer bytes than maximally allowed got read, it's safe to consider the end of the file reached
+          if ( chunks.length === 0 ) { // No chunks, empty file
+            callback ( null, '' );
+          } else if ( chunks.length === 1 ) { // Single chunk, no merging required
+            const chunk = chunks[chunks.length - 1];
             const content = chunk.toString ( 'utf8', 0, bytesRead );
             POOL.release ( chunk );
             callback ( null, content );
           } else { // Multiple chunks, merge required
+            const chunk = chunks[chunks.length - 1];
             const length = chunks.reduce ( ( total, chunk ) => total + chunk.length, 0 ) - ( chunk.length - bytesRead );
             const contentBuffer = Buffer.concat ( chunks, length );
             const content = contentBuffer.toString ( 'utf8', 0, length );
