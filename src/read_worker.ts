@@ -55,19 +55,19 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
     };
 
     const fileReadChunks = ( chunks: Buffer[], fd: number, position: number, callback: Callback<string> ): void => {
-      const asd123123123: Buffer = POOL.alloc ();
-      FS.fileRead ( fd, asd123123123, 0, asd123123123.length, position, ( error: Error | null, bytesRead: number ): void => {
+      const chunk: Buffer = POOL.alloc ();
+      FS.fileRead ( fd, chunk, 0, chunk.length, position, ( error: Error | null, bytesRead: number ): void => {
         if ( error ) {
-          POOL.release ( asd123123123 );
+          POOL.release ( chunk );
           chunks.forEach ( POOL.release );
           return callback ( error, '' );
         }
         if ( bytesRead ) {
-          chunks[chunks.length] = asd123123123;
+          chunks[chunks.length] = chunk;
         } else {
-          POOL.release ( asd123123123 );
+          POOL.release ( chunk );
         }
-        if ( bytesRead < asd123123123.length ) { // Fewer bytes than maximally allowed got read, it's safe to consider the end of the file reached
+        if ( bytesRead < chunk.length ) { // Fewer bytes than maximally allowed got read, it's safe to consider the end of the file reached
           if ( chunks.length === 0 ) { // No chunks, empty file
             callback ( null, '' );
           } else if ( chunks.length === 1 ) { // Single chunk, no merging required
