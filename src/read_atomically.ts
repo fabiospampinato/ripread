@@ -3,7 +3,7 @@
 
 import {readFile} from 'atomically';
 
-/* READ ATOMICALLY */
+/* MAIN */
 
 const readAtomically = async ( filePaths: string[], contents: (string | null)[] ): Promise<(string | Error)[]> => {
 

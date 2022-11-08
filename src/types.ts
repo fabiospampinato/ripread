@@ -1,5 +1,5 @@
 
-/* TYPES */
+/* MAIN */
 
 type Callback<T> = ( error: Error | null, value: T ) => void;
 
@@ -16,4 +16,4 @@ type Options<T> = {
 
 /* EXPORT */
 
-export {Callback, Parser, PromiseValue, Options};
+export type {Callback, Parser, PromiseValue, Options};

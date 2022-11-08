@@ -1,16 +1,16 @@
 
 /* IMPORT */
 
-const {strictEqual} = require ( 'assert' ),
-      ripread = require ( '../dist' ).default,
-      populate = require ( './populate' );
+import {strictEqual} from 'node:assert';
+import ripread from '../dist/index.js';
+import populate from './populate.js';
 
-/* TEST */
+/* MAIN */
 
-const test = async () => {
+const main = async () => {
 
-  const {filesPaths, filesContents} = populate (),
-        contents = await ripread ( filesPaths );
+  const {filesPaths, filesContents} = populate ();
+  const contents = await ripread ( filesPaths );
 
   filesContents.forEach ( ( content, index ) => {
 
@@ -22,4 +22,4 @@ const test = async () => {
 
 /* RUN */
 
-test ();
+main ();

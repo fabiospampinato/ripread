@@ -1,14 +1,16 @@
 
 /* IMPORT */
 
-const {readFile} = require ( 'atomically' ),
-      {readFileSync} = require ( 'fs' ),
-      {default: ripread} = require ( '../dist' ),
-      {filesPaths} = require ( '../test/populate' )();
+import {readFile} from 'atomically';
+import {readFileSync} from 'node:fs';
+import ripread from '../dist/index.js';
+import populate from '../test/populate.js';
 
-/* BENCHMARK */
+/* MAIN */
 
-const benchmark = async () => {
+const main = async () => {
+
+  const {filesPaths} = populate ();
 
   console.time ( 'ripread' );
   await ripread ( filesPaths );
@@ -26,4 +28,4 @@ const benchmark = async () => {
 
 /* RUN */
 
-benchmark ();
+main ();

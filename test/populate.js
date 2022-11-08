@@ -1,32 +1,32 @@
 
 /* IMPORT */
 
-const fs = require ( 'fs' ),
-      path = require ( 'path' );
+import fs from 'fs';
+import path from 'path';
 
-/* POPULATE */
+/* MAIN */
 
 const populate = () => {
 
   /* ROOT */
 
-  const rootPath = path.join ( __dirname, 'dump' );
+  const rootPath = path.join ( process.cwd (), 'test', 'dump' );
 
   fs.mkdirSync ( rootPath, { recursive: true } );
 
   /* FILES */
 
-  const files = [],
-        filesPaths = [],
-        filesContents = [];
+  const files = [];
+  const filesPaths = [];
+  const filesContents = [];
 
   /* EMPTY FILES */
 
   for ( let i = 0; i < 100; i++ ) {
 
-    const filePath = path.join ( rootPath, `${i}.txt` ),
-          fileContent = '',
-          file = {filePath, fileContent};
+    const filePath = path.join ( rootPath, `${i}.txt` );
+    const fileContent = '';
+    const file = {filePath, fileContent};
 
     if ( !fs.existsSync ( filePath ) ) {
 
@@ -44,9 +44,9 @@ const populate = () => {
 
   for ( let i = 100; i < 10000; i++ ) {
 
-    const filePath = path.join ( rootPath, `${i}.txt` ),
-          fileContent = 'a'.repeat ( 5000 ),
-          file = {filePath, fileContent};
+    const filePath = path.join ( rootPath, `${i}.txt` );
+    const fileContent = 'a'.repeat ( 5000 );
+    const file = {filePath, fileContent};
 
     if ( !fs.existsSync ( filePath ) ) {
 
@@ -64,9 +64,9 @@ const populate = () => {
 
   for ( let i = 10000; i < 10010; i++ ) {
 
-    const filePath = path.join ( rootPath, `${i}.txt` ),
-          fileContent = 'a'.repeat ( 1000000 ),
-          file = {filePath, fileContent};
+    const filePath = path.join ( rootPath, `${i}.txt` );
+    const fileContent = 'a'.repeat ( 1000000 );
+    const file = {filePath, fileContent};
 
     if ( !fs.existsSync ( filePath ) ) {
 
@@ -88,4 +88,4 @@ const populate = () => {
 
 /* EXPORT */
 
-module.exports = populate;
+export default populate;

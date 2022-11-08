@@ -1,5 +1,5 @@
 
-/* UTILS */
+/* MAIN */
 
 const Utils = {
 
@@ -9,8 +9,8 @@ const Utils = {
 
     if ( arr.length <= size ) return [arr];
 
-    const length = Math.ceil ( arr.length / size ),
-          chunks: T[][] = new Array ( length );
+    const length = Math.ceil ( arr.length / size );
+    const chunks: T[][] = new Array ( length );
 
     for ( let i = 0; i < length; i++ ) {
 
@@ -22,15 +22,9 @@ const Utils = {
 
   },
 
-  flatten: <T> ( arr: T[][] ): T[] => {
+  identity: <T> ( value: T ): T => {
 
-    return ( <T[]> [] ).concat ( ...arr );
-
-  },
-
-  noop: <T> ( x: T ): T => {
-
-    return x;
+    return value;
 
   }
 

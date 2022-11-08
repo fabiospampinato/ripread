@@ -1,17 +1,25 @@
 
 /* IMPORT */
 
-import {Callback} from './types';
+import type {Callback} from './types';
 
-/* READ WORKER */
+/* MAIN */
 
 // It's important that this function doesn't depend on the closure and can just be extracted by calling `#toString` on it
 
 function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(string | null)[]> {
 
+  /* CACHE */
+
+  const getCached = <T> ( key: string, get: () => T ): T => {
+
+    return globalThis[key] ||= get ();
+
+  };
+
   /* POOL */ // Reusing buffers as much as possible
 
-  const POOL = global['POOL'] = global['POOL'] || (() => {
+  const POOL = getCached ( 'POOL', () => {
 
     const pool: Buffer[] = [];
 
@@ -25,21 +33,33 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
 
     return {alloc, release};
 
-  })();
+  });
+
+  /* PATH */
+
+  const PATH = getCached ( 'PATH', () => {
+
+    return import ( 'path' ).then ( path => path.default );
+
+  });
 
   /* FILESYSTEM */ // Filesystem wrapper that's as close to the metal as Node possibly allows for
 
-  const FS = global['FS'] = global['FS'] || (() => {
+  const FS = getCached ( 'FS', () => {
 
-    const path = this.require ( 'path' ),
-          fs = process['binding']( 'fs' ),
-          {open, close, read, FSReqCallback} = fs,
-          {toNamespacedPath} = path;
+    const fs = process['binding']( 'fs' );
+    const {open, close, read, FSReqCallback} = fs;
 
     const fileOpen = ( filePath: string, flags: number, mode: number, callback: Callback<number> ): void => {
       const req = new FSReqCallback ();
       req.oncomplete = callback;
-      open ( toNamespacedPath ( filePath ), flags, mode, req );
+      if ( process.platform === 'win32' ) {
+        PATH.then ( path => {
+          open ( path.toNamespacedPath ( filePath ), flags, mode, req );
+        });
+      } else {
+        open ( filePath, flags, mode, req );
+      }
     };
 
     const fileClose = ( fd: number, callback: Callback<never> ): void => {
@@ -92,7 +112,7 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
 
     return {fileOpen, fileClose, fileRead, fileReadChunks};
 
-  })();
+  });
 
   /* EXECUTING */
 
@@ -100,8 +120,8 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
 
     /* CONTEXT */
 
-    const {length} = filePaths,
-          contents: (string | null)[] = new Array ( length );
+    const {length} = filePaths;
+    const contents: (string | null)[] = new Array ( length );
 
     let pending = length;
 
@@ -135,11 +155,13 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
 
             return FS.fileClose ( fd, onTick );
 
+          } else {
+
+            contents[i] = content;
+
+            return FS.fileClose ( fd, onTick );
+
           }
-
-          contents[i] = content;
-
-          return FS.fileClose ( fd, onTick );
 
         });
 
