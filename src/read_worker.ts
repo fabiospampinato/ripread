@@ -39,7 +39,7 @@ function readWorker ( filePaths: string[], fileChunkSize: number ): Promise<(str
 
   const PATH = getCached ( 'PATH', () => {
 
-    return import ( 'path' ).then ( path => path.default );
+    return import ( 'node:path' ).then ( path => path.default );
 
   });
 
